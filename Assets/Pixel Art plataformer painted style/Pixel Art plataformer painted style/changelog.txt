@@ -1,0 +1,23 @@
+
+
+ *Changelog:
+
+   v2.0
+   Added changelog.txt (this file!)
+   Added Lisense.txt
+
+   v3.0
+   update tileset (added shrub)
+   added new scenarios:
+     -Added Library. (PNG and PSD)
+     -Added Hills.   (PNG and PSD)
+     -Added Lake.    (PNG, PSD and complex PSD)
+   Added more examples. (PREVIEWS\Backgrounds)
+
+   v4.0
+   Added new tilesets versions, they're called "complex"
+    -Added morning/nightfall/dawn/night complex in their respective folders
+    -Added "tilesets complex.psd"
+    -Added support for Unity and Godot, you can download the files separatly.
+    -Added "example9.png" in Examples folder
+    -Moved all tilesets to tilesets folder
