@@ -33,7 +33,6 @@ public class PlayerController : MonoBehaviour
     private void Awake() {
         // Set initial values and get other object instances
         playerNumber = JoinManager.currentPlayerIndex;
-        cursor.cam = FindObjectsOfType<Camera>()[playerNumber];
         matrix = FindObjectOfType<ElementMatrix>();
 
         playerControls = new PlayerControls();

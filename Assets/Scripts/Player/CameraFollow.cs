@@ -6,7 +6,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     CinemachineVirtualCamera vcam;
-    PlayerController[] players;
+    public PlayerController[] players;
 
     [SerializeField] int index;
 

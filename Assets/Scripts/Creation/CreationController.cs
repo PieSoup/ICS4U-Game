@@ -15,7 +15,7 @@ public class CreationController : MonoBehaviour
     public Vector2 pos;
     public bool isMiningButton;
     public bool isPlacingButton;
-    public Camera cam;
+    [SerializeField] private Camera cam;
     [SerializeField] private float shootForce;
     [SerializeField] private Transform spawnPos;
 
