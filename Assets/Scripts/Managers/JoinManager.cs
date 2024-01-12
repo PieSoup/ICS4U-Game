@@ -40,6 +40,9 @@ public class JoinManager : MonoBehaviour
 
         foreach(Parallax parallax in playerParent.GetComponentsInChildren<Parallax>()) {
             parallax.gameObject.layer = layerToAdd;
+            foreach(Transform child in parallax.transform) {
+                child.gameObject.layer = layerToAdd;
+            }
         }
     }
 }

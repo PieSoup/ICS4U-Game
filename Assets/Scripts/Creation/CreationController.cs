@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,11 +44,15 @@ public class CreationController : MonoBehaviour
                 Vector2 rotation;
                 if(GetComponentInParent<PlayerInput>().currentControlScheme == "Keyboard+Mouse") {
                     rotation = cam.ScreenToWorldPoint(pos) - transform.position;
+                    float distance = Vector2.Distance(transform.position, cam.ScreenToWorldPoint(pos));
+                    distance = Mathf.Clamp(distance, 0f, 1.5f);
+                    spawnPos.localPosition = new Vector2(0f, distance);
                 }
                 else {
                     rotation = pos;
                 }
-                float rotZ = MathF.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
+                
+                float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
                 transform.rotation = Quaternion.Euler(0, 0, rotZ-90);
                 // Detect if the player is either mining or placing, set the brush size, and spawn the elements accordingly
                 if(isMiningButton) {

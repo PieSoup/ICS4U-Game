@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [Header("Components")]
     private int playerNumber;
     ElementMatrix matrix;
-    Player player => matrix.GetPlayer(playerNumber);
+    public Player player => matrix.GetPlayer(playerNumber);
 
     [Header("Movement Variables")]
     [SerializeField] private float moveSpeed;

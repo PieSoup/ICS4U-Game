@@ -121,7 +121,7 @@ public class Player
                         
                         if(y == 0 && isGrounded && velocity.x != 0f && (matrix.Get(segments[x,y].matrixX + 1, segments[x,y].matrixY) is not EmptyCell ||
                         matrix.Get(segments[x,y].matrixX - 1, segments[x,y].matrixY) is not EmptyCell)) {
-                            velocity.y = 25f;
+                            velocity.y = 30f;
                         }
                         return;
                     }
