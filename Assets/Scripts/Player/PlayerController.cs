@@ -19,10 +19,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Jump Variables")]
     [SerializeField] private float jumpForce;
-    [SerializeField] private float hangTime = 0.1f;
-    [SerializeField] private float jumpBuffer = 0.1f;
-    private bool canJump => jumpBufferCounter > 0f && hangTimeCounter > 0f;
-    private float hangTimeCounter;
+    [SerializeField] private float jumpBuffer;
+    private bool canJump => jumpBufferCounter > 0f;
     private float jumpBufferCounter;
 
     private Vector2 aimCursor;
@@ -66,7 +64,12 @@ public class PlayerController : MonoBehaviour
 
         }
         // Subtract time from the jump buffer
-        jumpBufferCounter -= Time.deltaTime;
+        if(player.isGrounded) {
+            jumpBufferCounter = jumpBuffer;
+        }
+        else {
+            jumpBufferCounter -= Time.deltaTime;
+        }
         // Check if the player is dead
         if(player.health <= 0) {
             Destroy(gameObject);
@@ -79,13 +82,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate() {
         Move(); // Move the player 
-        // Decrease the hang time variable to check if the player can jump
-        if(player.isGrounded) {
-            hangTimeCounter = hangTime;
-        }
-        else {
-            hangTimeCounter -= Time.fixedDeltaTime;
-        }
     }
     // Run various methods depending on certain event callbacks from the user
     public void OnAim(InputAction.CallbackContext ctx) => aimCursor = ctx.ReadValue<Vector2>();
@@ -140,9 +136,9 @@ public class PlayerController : MonoBehaviour
 
     private void Jump() {
         // When the user wants to jump, if they can, add y velocity
-        jumpBufferCounter = jumpBuffer;
         if(canJump) {
             player.velocity.y = jumpForce;
         }
+        jumpBufferCounter = 0f;
     }
 }

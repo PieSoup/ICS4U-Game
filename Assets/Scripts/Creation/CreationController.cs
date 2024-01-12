@@ -1,9 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
-using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -50,6 +47,8 @@ public class CreationController : MonoBehaviour
                 }
                 else {
                     rotation = pos;
+                    float distance = Vector2.Distance(transform.position, transform.position + (Vector3) pos);
+                    spawnPos.localPosition = new Vector2(0f, distance * 1.5f);
                 }
                 
                 float rotZ = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;

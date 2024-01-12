@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.XR.Haptics;
 
 // This class simply controls an index for the amount of players there are in the scene, and updates whenever one joins
 public class JoinManager : MonoBehaviour

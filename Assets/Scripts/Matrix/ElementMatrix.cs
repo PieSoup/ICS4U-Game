@@ -176,7 +176,9 @@ public class ElementMatrix : MonoBehaviour
     // Set elements at matrix coordinates if it is within the bounds of the world
     public void SpawnElementByMatrix(int x, int y, Vector3 velocity, ElementType elementType) {
         if(!isWithinBounds(x, y)) return;
-        SetElementAtIndex(x, y, elementType.CreateElementByMatrix(x, y, velocity));
+        if(Get(x, y).elementType != ElementType.PLAYERSEGMENT) {
+            SetElementAtIndex(x, y, elementType.CreateElementByMatrix(x, y, velocity));
+        }
     }
     // Method that uses a matrix traversal algorithm to fill in large areas if multiple points were skipping between frames
     public void SpawnElementBetweenTwoPoints(Vector3 pos1, Vector3 pos2, Vector3 velocity, ElementType elementType, int brushSize, CreationController.BRUSHTYPE brushType) {
