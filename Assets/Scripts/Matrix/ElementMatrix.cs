@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using UnityEngine.Rendering.Universal;
+using System.Reflection;
+using System;
 
 // Class for the general matrix that stores the elements
 public class ElementMatrix : MonoBehaviour
@@ -20,6 +22,9 @@ public class ElementMatrix : MonoBehaviour
 
     [SerializeField] private Material planeMaterial;
     private Texture2D texture;
+    private Texture2D emissionMapTex;
+    [SerializeField] private Light2D light2D;
+    private FieldInfo _LightCookieSprite =  typeof( Light2D ).GetField( "m_LightCookieSprite", BindingFlags.NonPublic | BindingFlags.Instance );
 
     private List<int> shuffledXIndexes;
 
@@ -28,6 +33,8 @@ public class ElementMatrix : MonoBehaviour
 
     public readonly int maxPlayers = 2;
     public Player[] players;
+
+    [SerializeField] private GameObject breakParticle;
     // Initialize other scripts
     private void Awake() {
         TryGetComponent(out meshFilter);
@@ -39,20 +46,23 @@ public class ElementMatrix : MonoBehaviour
     }
     // Initialize values and run starting methods for each script
     private void Start() {
-
-        sizeX = plane.SizeX;
-        sizeY = plane.SizeY;
+        sizeX = plane.SizeX * 16;
+        sizeY = plane.SizeY * 16;
 
         mapGenerator.sizeX = sizeX;
         mapGenerator.sizeY = sizeY;
 
         texture = new Texture2D(sizeX, sizeY, TextureFormat.ARGB32, false);
+        emissionMapTex = new Texture2D(sizeX, sizeY, TextureFormat.RGBA32, false);
         planeMaterial.mainTexture = texture;
+        planeMaterial.SetTexture("_EmissionMask", emissionMapTex);
+        _LightCookieSprite.SetValue(light2D, Sprite.Create(emissionMapTex, new Rect(0, 0, emissionMapTex.width, emissionMapTex.height), new Vector2(0f, 0f), 16));
 
         matrix = new Element[sizeX,sizeY];
         matrix = mapGenerator.GenerateMatrix();
 
         players = new Player[maxPlayers]; 
+        JoinManager.currentPlayerIndex = -1;
 
         shuffledXIndexes = GenerateShuffledXIndexes(sizeX);
 
@@ -106,10 +116,10 @@ public class ElementMatrix : MonoBehaviour
         }
         Player newPlayer;
         if(index % 2 == 0) {
-            newPlayer = new Player(30, 30, 7, 27, index, PlayerType.FIRE, this);
+            newPlayer = new Player(30, 30, 7, 27, index, PlayerClass.FIRE, this);
         }
         else {
-            newPlayer = new Player(sizeX - 30, sizeY - 30, 7, 27, index, PlayerType.WATER, this);
+            newPlayer = new Player(sizeX - 30, sizeY - 30, 7, 27, index, PlayerClass.WATER, this);
         }
 
         players[index] = newPlayer;
@@ -177,6 +187,9 @@ public class ElementMatrix : MonoBehaviour
     public void SpawnElementByMatrix(int x, int y, Vector3 velocity, ElementType elementType) {
         if(!isWithinBounds(x, y)) return;
         if(Get(x, y).elementType != ElementType.PLAYERSEGMENT) {
+            if(Get(x, y).elementType == ElementType.STONE && elementType == ElementType.EMPTYCELL) {
+                Instantiate(breakParticle, new Vector3(x/16f, y/16f, 0f), Quaternion.identity);
+            }
             SetElementAtIndex(x, y, elementType.CreateElementByMatrix(x, y, velocity));
         }
     }
@@ -258,6 +271,8 @@ public class ElementMatrix : MonoBehaviour
     private void DrawTexture() {
 
         Color[] colors = new Color[sizeX * sizeY];
+
+        Color[] emissionColors = new Color[sizeX * sizeY];
         
         for (int y = 0; y < sizeY; y++)
         {
@@ -266,8 +281,21 @@ public class ElementMatrix : MonoBehaviour
                 int index = y * sizeX + x;
                 Color newColor = matrix[x,y].elementColor;
                 colors[index] = newColor;
+
+                if(matrix[x,y] is Lava) {
+                    emissionColors[index] = new Color(1,1,1);
+                }
+                else {
+                    emissionColors[index] = new Color(0,0,0);
+                }
             }
         }
+
+        emissionMapTex.filterMode = FilterMode.Point;
+        emissionMapTex.SetPixels(emissionColors);
+        emissionMapTex.Apply();
+
+
         texture.filterMode = FilterMode.Point;
         texture.SetPixels(colors);
         texture.Apply();

@@ -9,7 +9,7 @@ public class EmptyCell : Element
     private static Element element;
     //Constructor
     public EmptyCell(int x, int y) : base(x, y) {
-        elementColor = Color.clear; // Set the color
+        
     }
 
     public static Element GetInstance() {

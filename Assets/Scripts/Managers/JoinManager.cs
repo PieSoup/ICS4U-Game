@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,10 +13,14 @@ public class JoinManager : MonoBehaviour
     private List<PlayerInput> players = new List<PlayerInput>();
     [SerializeField] private List<LayerMask> playerLayers = new List<LayerMask>();
 
+    [SerializeField] private Canvas joinCanvas;
+    [SerializeField] private TextMeshProUGUI joinText;
+
     private PlayerInputManager playerInputManager;
 
     private void Awake() {
         playerInputManager = GetComponent<PlayerInputManager>();
+        joinText.text = "Player 1 press any button to join.";
     }
 
     private void OnEnable() {
@@ -28,7 +33,12 @@ public class JoinManager : MonoBehaviour
 
     public void AddPlayer(PlayerInput player) {
         currentPlayerIndex += 1;
-
+        if(currentPlayerIndex == 0) {
+            joinText.text = "Player 2 press any button to join";
+        }
+        else {
+            joinCanvas.gameObject.SetActive(false);
+        }
         Transform playerParent = player.transform.parent;
         players.Add(player);
 

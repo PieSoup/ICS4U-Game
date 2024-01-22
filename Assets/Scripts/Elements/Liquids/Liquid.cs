@@ -93,6 +93,15 @@ public abstract class Liquid : Element
                 return;
             }
         }
+        if(this is Water) {
+            float t = Mathf.Clamp01(velocity.magnitude / 400f);
+            if(matrix.Get(matrixX, matrixY + 1) is not Liquid) {
+                elementColor = Color.Lerp(ColorConstants.elementColorDict[elementType][0], ColorConstants.elementColorDict[elementType][1], t);
+            }
+            else {
+                elementColor = ColorConstants.elementColorDict[elementType][0];
+            }
+        }
     }
     /* This method is used to determine the particles behaviour depending on a variety of factors.
        Mainly, it gets the element at a set of coordinates and updates the elements position in the matrix depending on the element's type.

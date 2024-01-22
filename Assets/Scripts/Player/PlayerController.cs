@@ -16,30 +16,50 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float moveSpeed;
     private Vector2 horizontalMovement;
     private bool facingRight = true;
+    private bool canMove = true;
 
     [Header("Jump Variables")]
     [SerializeField] private float jumpForce;
     [SerializeField] private float jumpBuffer;
     private bool canJump => jumpBufferCounter > 0f;
     private float jumpBufferCounter;
+    public List<Sprite> jumpSprites;
 
     private Vector2 aimCursor;
     [SerializeField] CreationController cursor;
     private PlayerControls playerControls;
-    int cycleCount = 0;
+    int cycleCount = 1;
+    ElementType classElementType;
+
+    [SerializeField] Animator anim;
+    [SerializeField] RuntimeAnimatorController[] animControllers;
+    string animTypeName;
 
     private void Awake() {
         // Set initial values and get other object instances
         playerNumber = JoinManager.currentPlayerIndex;
+
         matrix = FindObjectOfType<ElementMatrix>();
 
         playerControls = new PlayerControls();
 
-        if(player.playerType == PlayerType.FIRE) {
-            cursor.selectedElementType = ElementType.LAVA;
+        if(player.playerType == PlayerClass.FIRE) {
+            classElementType = ElementType.LAVA;
         }
-        else if(player.playerType == PlayerType.WATER) {
-            cursor.selectedElementType = ElementType.WATER;
+        else if(player.playerType == PlayerClass.WATER) {
+            classElementType = ElementType.WATER;
+        }
+        else if(player.playerType == PlayerClass.EARTH) {
+            classElementType = ElementType.SAND;
+        }
+        cursor.selectedElementType = classElementType;
+        string typeName = player.playerType.ToString();
+        animTypeName = $"{typeName[0].ToString().ToUpper()}{typeName.Substring(1).ToLower()}" + "Bender";
+        foreach(RuntimeAnimatorController animController in animControllers) {
+            if(animController.name == animTypeName) {
+                anim.runtimeAnimatorController = animController;
+                break;
+            }
         }
     }
 
@@ -52,6 +72,8 @@ public class PlayerController : MonoBehaviour
     }
 
     void Update() {
+
+        //canMove = playerNumber < 2 ? false : true;
         // Set the cursor position to the aimCursor input variable
         if(Mathf.Abs(aimCursor.x) + Mathf.Abs(aimCursor.y) > 0.1f) {
             cursor.pos = aimCursor;
@@ -70,10 +92,17 @@ public class PlayerController : MonoBehaviour
         else {
             jumpBufferCounter -= Time.deltaTime;
         }
-        // Check if the player is dead
+
         if(player.health <= 0) {
-            Destroy(gameObject);
-        } 
+            canMove = false;
+        }
+        anim.SetFloat("Speed", Mathf.Abs(player.velocity.x));
+        if(player.isGrounded) {
+            anim.SetBool("isGrounded", true);
+        }
+        else {
+            anim.SetBool("isGrounded", false);
+        }
         // Set the transform to the actual player's position in the world
         transform.position = new Vector2((float) player.segments[player.sizeX/2 + 1,player.sizeY/2 + 3].matrixX / 16f, (float) player.segments[player.sizeX/2 + 1,player.sizeY/2 + 3].matrixY / 16f);
 
@@ -81,52 +110,60 @@ public class PlayerController : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        Move(); // Move the player 
+        if(canMove) {
+            Move(); // Move the player 
+        }
+        if(!player.isGrounded) {
+            GetAirSprite();
+        }
+        else {
+            anim.speed = 1f;
+        }
     }
     // Run various methods depending on certain event callbacks from the user
     public void OnAim(InputAction.CallbackContext ctx) => aimCursor = ctx.ReadValue<Vector2>();
     public void OnMove(InputAction.CallbackContext ctx) => horizontalMovement = ctx.ReadValue<Vector2>();
     public void OnMine(InputAction.CallbackContext ctx) {
-        if(ctx.phase == InputActionPhase.Performed) {
+        if(ctx.phase == InputActionPhase.Performed && canMove) {
             cursor.isMiningButton = !cursor.isMiningButton; // Set the mining flag
+            if(cursor.isMiningButton) {
+                FindObjectOfType<AudioManager>().Play("Mine");
+            }
+            else {
+                FindObjectOfType<AudioManager>().Stop("Mine");
+            }
         }
-        
     }
 
     public void OnJump(InputAction.CallbackContext ctx) => Jump();
     public void OnCycle(InputAction.CallbackContext ctx) {
         // Cycle the current element
-        if(cycleCount == 2) {
+        if(cycleCount >= 2) {
             ElementType selectedElement = cursor.selectedElementType;
-            if(player.playerType == PlayerType.FIRE) {
-                if(selectedElement == ElementType.LAVA) {
-                    cursor.selectedElementType = ElementType.SAND;
-                }
-                else if(selectedElement == ElementType.SAND) {
-                    cursor.selectedElementType = ElementType.STONE;
-                }
-                else {
-                    cursor.selectedElementType = ElementType.LAVA;
-                }
+            FindObjectOfType<AudioManager>().Stop(Enum.GetName(typeof(ElementType), selectedElement));
+            if(selectedElement == classElementType) {
+                cursor.selectedElementType = ElementType.STONE;
             }
-            else if(player.playerType == PlayerType.WATER) {
-            if(selectedElement == ElementType.WATER) {
-                    cursor.selectedElementType = ElementType.SAND;
-                }
-                else if(selectedElement == ElementType.SAND) {
-                    cursor.selectedElementType = ElementType.STONE;
-                }
-                else {
-                    cursor.selectedElementType = ElementType.WATER;
-                }
+            else {
+                cursor.selectedElementType = classElementType;
+            }
+            
+            if(cursor.isPlacingButton) {
+                FindObjectOfType<AudioManager>().Play(Enum.GetName(typeof(ElementType), cursor.selectedElementType));
             }
             cycleCount = 0;
         }
         cycleCount += 1;
     }
     public void OnPlace(InputAction.CallbackContext ctx) {
-        if(ctx.phase == InputActionPhase.Performed) {
+        if(ctx.phase == InputActionPhase.Performed && canMove) {
             cursor.isPlacingButton = !cursor.isPlacingButton; // Set the placing flag
+            if(cursor.isPlacingButton) {
+                FindObjectOfType<AudioManager>().Play(Enum.GetName(typeof(ElementType), cursor.selectedElementType));
+            }
+            else {
+                FindObjectOfType<AudioManager>().Stop(Enum.GetName(typeof(ElementType), cursor.selectedElementType));
+            }
         }
     }
 
@@ -136,9 +173,22 @@ public class PlayerController : MonoBehaviour
 
     private void Jump() {
         // When the user wants to jump, if they can, add y velocity
-        if(canJump) {
+        if(canJump && canMove) {
             player.velocity.y = jumpForce;
         }
         jumpBufferCounter = 0f;
+    }
+
+    private void GetAirSprite() {
+
+        int airIndex = (int) Mathf.Clamp(Helpers.Map(player.velocity.y, -jumpForce, jumpForce, 0, jumpSprites.Count),
+        0,
+        jumpSprites.Count - 1
+
+        );
+
+        anim.speed = 0f;
+        anim.Play(animTypeName + "_Jump", 0, (float) airIndex / jumpSprites.Count);
+
     }
 }

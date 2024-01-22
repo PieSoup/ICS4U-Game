@@ -7,11 +7,9 @@ public class Lava : Liquid
 {
     // Constructor to set base values
     public Lava(int x, int y, Vector3 velocity) : base(x, y) {
-
-        elementColor = Color.red;
         
-        dispersionRate = 1;
-        frictionFactor = 0.999f;
+        dispersionRate = 0;
+        frictionFactor = 1f;
         this.velocity = velocity;
     }
 }

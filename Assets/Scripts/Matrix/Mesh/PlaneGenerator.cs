@@ -57,7 +57,7 @@ public class Plane : ProdeduralShape {
 
         CreateVertices();
         CreateTriangles();
-        ScaleMesh((1f/16f));
+        //ScaleMesh((1f/16f));
         CreateUVs();
         // Set the actual mesh variables to the generated ones
         mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
@@ -133,7 +133,7 @@ public class Plane : ProdeduralShape {
         foreach (Vector3 vertex in vertices) {
 
             // Calculate UV coordinates based on the vertex position and mesh size.
-            uvs[uvIndexCounter] = new Vector2(vertex.x / ((sizeX - 1) / 16), vertex.y / ((sizeY - 1f) / 16f));
+            uvs[uvIndexCounter] = new Vector2(vertex.x / (sizeX - 1), vertex.y / ((sizeY - 1f)));
 
             // Increment the UV index counter for the next iteration.
             uvIndexCounter++;

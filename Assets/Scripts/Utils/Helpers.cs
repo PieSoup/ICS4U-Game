@@ -16,4 +16,8 @@ public class Helpers : MonoBehaviour
     public static int DistanceBetweenTwoPoints(int x1, int x2, int y1, int y2) {
         return Mathf.CeilToInt(Mathf.Sqrt((float)(Math.Pow(x1 - x2, 2) + Mathf.Pow(y1 - y2, 2))));
     }
+
+    public static float Map(float numberMap, float minMap, float maxMap, int minMapIndex, int maxMapIndex){
+        return (numberMap - minMap) * (maxMapIndex - minMapIndex) / (maxMap - minMap) + minMapIndex;
+    }
 }

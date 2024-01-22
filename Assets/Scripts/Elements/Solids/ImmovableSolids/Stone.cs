@@ -6,7 +6,7 @@ public class Stone : ImmovableSolid
 {
     // Constructor to set base values
     public Stone(int x, int y) : base(x, y) {
-        elementColor = Color.grey;
+
     }
 
     public override void Step(ElementMatrix matrix) {}

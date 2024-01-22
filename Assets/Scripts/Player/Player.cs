@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class Player
@@ -21,13 +21,13 @@ public class Player
     public bool isGrounded {get; private set;}
 
     public int health = 20;
-    public PlayerType playerType;
+    public PlayerClass playerType;
     private float iTime = 0.15f;
     private float iTimeCounter;
     public int playerIndex;
 
     // Constructor
-    public Player(int x, int y, int sizeX, int sizeY, int PlayerIndex, PlayerType playerType, ElementMatrix matrix) {
+    public Player(int x, int y, int sizeX, int sizeY, int PlayerIndex, PlayerClass playerType, ElementMatrix matrix) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
         playerIndex = PlayerIndex;
@@ -104,18 +104,35 @@ public class Player
             int yOffset = yIncrease * yModifier;
             bool unstopped;
 
+            isGrounded = false;
             for(int y = 0; y < segments.GetLength(1); y++) {
                 for(int x = 0; x < segments.GetLength(0); x++) {
+                    if(y == 0 && !isGrounded) {
+                        for(int j = 1; j <= 3; j++) {
+                            if(matrix.Get(segments[x,y].matrixX, segments[x,y].matrixY - j) is Solid) {
+                                isGrounded = true;
+                                hittingWall = false;
+                                if(velocity.y < 0) {
+                                    velocity.y = 0;
+                                }
+                                break;
+                            }
+                        }
+
+                        for(int j = 1; j <= 2; j++) {
+                            if(matrix.Get(segments[x,y].matrixX, segments[x,y].matrixY - j) is Liquid) {
+                                if(velocity.y < -70f) {
+                                    velocity.y = -70f;
+                                }
+                            }
+                        }
+                    }
                     PlayerSegment playerSegment = (PlayerSegment) segments[x,y];
                     unstopped = playerSegment.StepAsPlayer(matrix, xOffset, yOffset);
                     if(!unstopped) {
                         MoveToLastValid(matrix, lastValidPosition);
-                        if(y == 0 && matrix.Get(segments[x,y].matrixX, segments[x,y].matrixY - 1) is not EmptyCell) {
-                            velocity.y = 0f;
-                            isGrounded = true;
-                            hittingWall = false;
-                        }
-                        else if(y == segments.GetLength(1) - 1 && matrix.Get(segments[x,y].matrixX, segments[x,y].matrixY + 1) is not EmptyCell) {
+                        
+                        if(y == segments.GetLength(1) - 1 && matrix.Get(segments[x,y].matrixX, segments[x,y].matrixY + 1) is not EmptyCell) {
                             velocity.y *= -1f;
                         }
                         
@@ -125,9 +142,8 @@ public class Player
                         }
                         return;
                     }
-                    else {
-                        isGrounded = false;
-                    }
+
+
                 }
             }
             lastValidPosition.x = matrixX + xOffset;
@@ -147,7 +163,6 @@ public class Player
 
         int xOffset = (int) lastValidPosition.x - matrixX;
         int yOffset = (int) lastValidPosition.y - matrixY;
-
         foreach(Element segment in segments) {
             PlayerSegment playerSegment = (PlayerSegment) segment;
             int neighbourX = playerSegment.matrixX + xOffset;
@@ -191,15 +206,21 @@ public class Player
     public void TakeDamage(ElementMatrix matrix, Element element) {
         if(iTimeCounter <= 0f) {
             switch(playerType) {
-                case PlayerType.FIRE:
-                    if(element.elementType == ElementType.WATER) {
+                case PlayerClass.FIRE:
+                    if(element.elementType != ElementType.LAVA) {
                         health -= 1;
                         element.DieAndReplace(matrix, ElementType.EMPTYCELL);
                     }
                     break;
                 
-                case PlayerType.WATER:
-                    if(element.elementType == ElementType.LAVA) {
+                case PlayerClass.WATER:
+                    if(element.elementType != ElementType.WATER) {
+                        health -= 1;
+                        element.DieAndReplace(matrix, ElementType.EMPTYCELL);
+                    }
+                    break;
+                case PlayerClass.EARTH:
+                    if(element.elementType != ElementType.SAND) {
                         health -= 1;
                         element.DieAndReplace(matrix, ElementType.EMPTYCELL);
                     }
@@ -210,7 +231,7 @@ public class Player
     }
 }
 // Player class enum
-public enum PlayerType {
+public enum PlayerClass {
     FIRE,
     WATER,
     EARTH,

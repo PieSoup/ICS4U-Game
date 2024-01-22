@@ -21,10 +21,14 @@ public abstract class Element
     public float xThreshold = 0;
     public float yThreshold = 0;
     public float frictionFactor;
+
+    public string soundName;
     // Constructor
     public Element(int x, int y) {
         SetCoordinatesByMatrix(x, y);  // Set position
         elementType = GetElementEnumType(); // Set the type
+        elementColor = ColorConstants.GetColorForElementType(elementType, x, y);
+        soundName = Enum.GetName(typeof(ElementType), elementType);
 
         stepped.Set(0, ElementMatrix.stepped.Get(0)); // Flag for if the element has stepped this frame already
     }
