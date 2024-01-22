@@ -8,3 +8,18 @@ This is a 2D physics-based fighting game that combines the excitement of element
 The different kinds of elements combined with a system meant to mimic real-life physics allows for lots of emergent gameplay and creative strategies
 ### 2. Procedurally Generated Caves
 Employ cellular automata to generate procedurally generated caves, ensuring each battle takes place in a unique environment. Enjoy infinite replayability as the game creates interesting cave structures.
+
+## Updates:
+### v1.0:
+Base physics system with movement and combat without much polish
+## v1.1:
+- Added stone texture
+- Added lava glow effect
+- Added animations for player
+- Added dynamic colors for elements
+- Added new Earth class
+- Added different sprites for each class
+- Added sound effects (fire_shoot, water_shoot, stone, mine)
+- Added player lobby screen
+- Added end screen
+- Added death animation
