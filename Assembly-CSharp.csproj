@@ -65,23 +65,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Elements\Solids\ImmovableSolids\Stone.cs" />
+    <Compile Include="Assets\Scripts\Utils\MaterialMap.cs" />
+    <Compile Include="Assets\Scripts\Managers\Level\LevelManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\AudioManager.cs" />
     <Compile Include="Assets\Scripts\Matrix\ElementMatrix.cs" />
     <Compile Include="Assets\Textures\Pixel Art plataformer painted style\Scenes\MoveBackground.cs" />
     <Compile Include="Assets\Scripts\Elements\Player\PlayerSegment.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\Audio\Sound.cs" />
+    <Compile Include="Assets\Scripts\Utils\Fade.cs" />
     <Compile Include="Assets\Scripts\Elements\Liquids\Liquid.cs" />
     <Compile Include="Assets\Scripts\Elements\Element.cs" />
     <Compile Include="Assets\Scripts\Elements\Solids\Solid.cs" />
+    <Compile Include="Assets\Scripts\Managers\PlayerConfigurationManager.cs" />
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\Level\LevelButton.cs" />
     <Compile Include="Assets\Scripts\Player\Health.cs" />
     <Compile Include="Assets\Scripts\Elements\Liquids\Water.cs" />
-    <Compile Include="Assets\Scripts\Helpers.cs" />
     <Compile Include="Assets\Scripts\Player\PlayerControls.cs" />
     <Compile Include="Assets\Scripts\Creation\CreationController.cs" />
     <Compile Include="Assets\Scripts\Matrix\MapGenerator.cs" />
     <Compile Include="Assets\Scripts\Elements\Solids\MovableSolids\Sand.cs" />
+    <Compile Include="Assets\Scripts\Elements\ColorConstants.cs" />
     <Compile Include="Assets\Scripts\Elements\Particles\Particle.cs" />
-    <Compile Include="Assets\Scripts\Managers\MainMenu.cs" />
     <Compile Include="Assets\Scripts\Managers\Parallax.cs" />
     <Compile Include="Assets\Scripts\Elements\ElementType.cs" />
     <Compile Include="Assets\Scripts\Matrix\Mesh\SortingLayer.cs" />
@@ -90,6 +96,7 @@
     <Compile Include="Assets\Scripts\Elements\Liquids\Lava.cs" />
     <Compile Include="Assets\Scripts\Elements\EmptyCell.cs" />
     <Compile Include="Assets\Scripts\Player\CameraFollow.cs" />
+    <Compile Include="Assets\Scripts\Utils\Helpers.cs" />
     <Compile Include="Assets\Scripts\Managers\JoinManager.cs" />
     <Compile Include="Assets\Scripts\Matrix\ColliderGenerator.cs" />
   </ItemGroup>
