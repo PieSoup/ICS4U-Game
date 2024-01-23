@@ -131,6 +131,11 @@ public abstract class MovableSolid : Solid
             }
         }
         else if(neighbour is Solid) {
+            if(neighbour is PlayerSegment) {
+                PlayerSegment playerSegment = (PlayerSegment) neighbour;
+                Player player = playerSegment.player;
+                player.TakeDamage(matrix, this);
+            }
             if(depth > 0) return true;
             if(isFinal) {
                 MoveToLastValid(matrix, lastValidLocation);

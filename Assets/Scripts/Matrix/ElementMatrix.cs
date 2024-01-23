@@ -33,6 +33,8 @@ public class ElementMatrix : MonoBehaviour
 
     public readonly int maxPlayers = 2;
     public Player[] players;
+    private PlayerClass[] allTypes = (PlayerClass[]) Enum.GetValues(typeof(PlayerClass));
+    private List<PlayerClass> playerClasses = new List<PlayerClass>();
 
     [SerializeField] private GameObject breakParticle;
     // Initialize other scripts
@@ -63,6 +65,7 @@ public class ElementMatrix : MonoBehaviour
 
         players = new Player[maxPlayers]; 
         JoinManager.currentPlayerIndex = -1;
+        playerClasses = allTypes.ToList();
 
         shuffledXIndexes = GenerateShuffledXIndexes(sizeX);
 
@@ -104,6 +107,7 @@ public class ElementMatrix : MonoBehaviour
     // Create players at certain spawn locations
     private Player CreatePlayer(int x, int y) {
         int index = -1;
+
         for(int i = 0; i < players.Length; i++) {
             Player player = players[i];
             if(player == null) {
@@ -111,16 +115,19 @@ public class ElementMatrix : MonoBehaviour
                 break;
             }
         }
+
         if(index == -1) {
             return null;
         }
         Player newPlayer;
+        PlayerClass newClass = playerClasses[UnityEngine.Random.Range(0, playerClasses.Count)];
         if(index % 2 == 0) {
-            newPlayer = new Player(30, 30, 7, 27, index, PlayerClass.FIRE, this);
+            newPlayer = new Player(30, 30, 7, 27, index, newClass, this);
         }
         else {
-            newPlayer = new Player(sizeX - 30, sizeY - 30, 7, 27, index, PlayerClass.WATER, this);
+            newPlayer = new Player(sizeX - 30, sizeY - 30, 7, 27, index, newClass, this);
         }
+        playerClasses.Remove(newClass);
 
         players[index] = newPlayer;
         return newPlayer;
@@ -185,7 +192,7 @@ public class ElementMatrix : MonoBehaviour
     }
     // Set elements at matrix coordinates if it is within the bounds of the world
     public void SpawnElementByMatrix(int x, int y, Vector3 velocity, ElementType elementType) {
-        if(!isWithinBounds(x, y)) return;
+        if(!(x > 1 && x < sizeX - 1 && y > 1 && y < sizeY - 1)) return;
         if(Get(x, y).elementType != ElementType.PLAYERSEGMENT) {
             if(Get(x, y).elementType == ElementType.STONE && elementType == ElementType.EMPTYCELL) {
                 Instantiate(breakParticle, new Vector3(x/16f, y/16f, 0f), Quaternion.identity);

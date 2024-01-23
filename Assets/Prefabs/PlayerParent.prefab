@@ -293,6 +293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 404a028ea1b4cc84fa622cdaea0cfad4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sprite: {fileID: 3813254073015705468}
   moveSpeed: 80
   jumpForce: 150
   jumpBuffer: 0.2

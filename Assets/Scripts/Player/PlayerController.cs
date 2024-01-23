@@ -11,12 +11,13 @@ public class PlayerController : MonoBehaviour
     private int playerNumber;
     ElementMatrix matrix;
     public Player player => matrix.GetPlayer(playerNumber);
+    [SerializeField] SpriteRenderer sprite;
 
     [Header("Movement Variables")]
     [SerializeField] private float moveSpeed;
     private Vector2 horizontalMovement;
     private bool facingRight = true;
-    private bool canMove = true;
+    private bool canMove = false;
 
     [Header("Jump Variables")]
     [SerializeField] private float jumpForce;
@@ -73,7 +74,7 @@ public class PlayerController : MonoBehaviour
 
     void Update() {
 
-        //canMove = playerNumber < 2 ? false : true;
+        canMove = JoinManager.currentPlayerIndex < matrix.maxPlayers - 1 ? false : true;
         // Set the cursor position to the aimCursor input variable
         if(Mathf.Abs(aimCursor.x) + Mathf.Abs(aimCursor.y) > 0.1f) {
             cursor.pos = aimCursor;
@@ -95,6 +96,11 @@ public class PlayerController : MonoBehaviour
 
         if(player.health <= 0) {
             canMove = false;
+            player.health = 0;
+            sprite.color = new Color(1f, 1f, 1f, 0f);
+        }
+        if(player.iTimeCounter > 0) {
+            Flicker(player.iTimeCounter / 5);
         }
         anim.SetFloat("Speed", Mathf.Abs(player.velocity.x));
         if(player.isGrounded) {
@@ -190,5 +196,12 @@ public class PlayerController : MonoBehaviour
         anim.speed = 0f;
         anim.Play(animTypeName + "_Jump", 0, (float) airIndex / jumpSprites.Count);
 
+    }
+
+    private IEnumerator Flicker(float delay) {
+        sprite.color = new Color(1f, 1f, 1f, 0.5f);
+        yield return new WaitForSeconds(delay);
+        sprite.color = new Color(1f, 1f, 1f, 1f);
+        yield return new WaitForSeconds(delay);
     }
 }

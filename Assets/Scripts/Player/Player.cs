@@ -18,12 +18,12 @@ public class Player
     public int sizeY {get; private set;}
 
     public bool hittingWall {get; set;}
-    public bool isGrounded {get; private set;}
+    public bool isGrounded {get; set;}
 
     public int health = 20;
     public PlayerClass playerType;
     private float iTime = 0.15f;
-    private float iTimeCounter;
+    public float iTimeCounter;
     public int playerIndex;
 
     // Constructor
@@ -234,6 +234,5 @@ public class Player
 public enum PlayerClass {
     FIRE,
     WATER,
-    EARTH,
-    AIR
+    EARTH
 }
