@@ -1,5 +1,5 @@
 
-# Boxing Benders
+# Box Benders
 
 This is a 2D physics-based fighting game that combines the excitement of elemental manipulation seen in media such as Avatar: The Last Airbender with procedurally generated caves, offering a unique and endlessly replayable experience. Engage in battles with your chosen element-based class, navigate caverns, and unleash creative attacks to emerge victorious.
 
@@ -19,8 +19,9 @@ Base physics system with movement and combat without much polish
 - Added dynamic colors for elements - more polish to look nicer
 - Added new Earth class - different physics of attack for new emergent gameplay
 - Added different sprites for each class - easier differentiation of chosen class
-- Added sound effects (fire_shoot, water_shoot, stone, mine) - more feedback for player actions
+- Added sound effects (fire_shoot, water_shoot, sand_shoot, stone, mine) - more feedback for player actions
 - Added player lobby screen - essential for game loop (players no longer able to start playing without a second player)
 - Added end screen - esssential for game loop (determine who wins)
 - Added death animation - know instantly when the player dies
 - Added particle effects for mining - more polish to look nicer
+- Added title screen music and battle music
